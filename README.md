@@ -1,4 +1,4 @@
-# Yelp Camp Web Application
+# Wild Weekender web Application
 
 This web application allows users to add, view, access, and rate campgrounds by location. It is based on "The Web Developer Bootcamp" by Colt Steele, but includes several modifications and bug fixes. The application leverages a variety of technologies and packages, such as:
 
@@ -30,6 +30,6 @@ docker compose up
 ```
 
 ## Application Screenshots
-![](./images/home.jpg)
+![](./images/homepage.jpg)
 ![](./images/campgrounds.jpg)
 ![](./images/register.jpg)
