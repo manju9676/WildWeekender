@@ -20,7 +20,7 @@ FROM node:18-alpine AS final
 WORKDIR /app
 
 # Copy installed dependencies from build stage
-COPY --from=build /app/node_modules ./node_modules
+# COPY --from=build /app/node_modules ./node_modules
 
 # Copy source code from build stage
 COPY --from=build /app ./
