@@ -1,24 +1,19 @@
 pipeline {
     agent any
     environment{
-        SCANNER_HOME = tool 'mysonar'
-        CLOUDINARY_CLOUD_NAME = credentials('CLOUDINARY_CLOUD_NAME')
-        CLOUDINARY_KEY = credentials('CLOUDINARY_KEY')
-        CLOUDINARY_SECRET = credentials('CLOUDINARY_SECRET')
-        MAPBOX_TOKEN = credentials('MAPBOX_TOKEN')
-        DB_URL = credentials('DB_URL')
-        Image_Name = "wild-weekend"
-        Docker_Username = "manju9676"
+        SCANNER_HOME = tool('sonar')
+        IMAGE_NAME = 'wild_weekender'
+        DOCKER_USERNAME = 'manju9676'
     }
-    stages {
-        stage('code') {
-            steps {
-              git 'https://github.com/manju9676/WildWeekender.git'
+    stages{
+        stage('Code'){
+            steps{
+                git 'https://github.com/manju9676/WildWeekender.git'
             }
         }
         stage('CQA'){
             steps{
-                withSonarQubeEnv('mysonar'){
+                withSonarQubeEnv('sonar'){
                     sh ''' $SCANNER_HOME/bin/sonar-scanner -Dsonar.projectName=wild-weekender \
                         -Dsonar.projectKey=wild-weekender'''
                 }
@@ -33,31 +28,40 @@ pipeline {
         }
         stage('OWASP'){
             steps{
-                dependencyCheck additionalArguments: '--scan ./ --disableYarnAudit --disableNodeAudit', nvdCredentialsId: 'nvd_api_key', odcInstallation: 'DP-check'
+                dependencyCheck additionalArguments: '--scan ./ --disableYarnAudit --disableNodeAudit', nvdCredentialsId: 'nvd_key', odcInstallation: 'owasp-dependency'
                 dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
             }
         }
-        stage('Build Image'){
+        stage('Image Build'){
             steps{
-                sh 'docker build -t $Image_Name .'
+                sh 'docker build -t $IMAGE_NAME .'
             }
         }
         stage('Image Scan'){
             steps{
-                sh 'trivy image $Image_Name'
+                sh 'trivy image $IMAGE_NAME'
             }
         }
-        stage('tag and push'){
+        stage('Tag and Push'){
             steps{
-                withDockerRegistry(credentialsId: 'docker-hub') {
-                    sh 'docker tag $Image_Name $Docker_Username/$Image_Name:$BUILD_NUMBER'
-                    sh 'docker push $Docker_Username/$Image_Name:$BUILD_NUMBER'
+                withDockerRegistry([credentialsId: 'docker-hub', url: 'https://index.docker.io/v1/']) {
+                     sh 'docker tag $IMAGE_NAME $DOCKER_USERNAME/$IMAGE_NAME:$BUILD_NUMBER'
+                     sh 'docker push $DOCKER_USERNAME/$IMAGE_NAME:$BUILD_NUMBER'
+                        }
+               
                 }
-            }
-        }
-        stage('Run Container'){
+          }
+        stage('Deploy to K8s'){
             steps{
-                sh 'docker run -itd -p 3000:3000 -e CLOUDINARY_CLOUD_NAME=$CLOUDINARY_CLOUD_NAME -e CLOUDINARY_KEY=$CLOUDINARY_KEY -e CLOUDINARY_SECRET=$CLOUDINARY_SECRET -e MAPBOX_TOKEN=$MAPBOX_TOKEN -e DB_URL=$DB_URL --name cont1 $Docker_Username/$Image_Name:$BUILD_NUMBER'
+                withKubeConfig(caCertificate: '', clusterName: 'EKS_CLOUD', contextName: '', credentialsId: 'k8-token', namespace: 'wild-weekender', restrictKubeConfigAccess: false, serverUrl: 'https://CF6A4933A3FF7AF6AD047EC6DCF3238F.gr7.us-east-1.eks.amazonaws.com') {
+                sh 'kubectl apply -f Manifests/1.secret.yml'
+                sh 'kubectl apply -f Manifests/2.resource.yml'
+                sh 'kubectl apply -f Manifests/3.limitrange.yml'
+                sh 'kubectl apply -f Manifests/4.deploy.yml'
+                sh 'kubectl apply -f Manifests/5.svc.yml'
+                sh 'kubectl apply -f Manifests/6.hpa.yml'
+                sh 'kubectl apply -f Manifests/7.pdb.yml'
+                }
             }
         }
     }
