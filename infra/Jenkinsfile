@@ -5,22 +5,28 @@ pipeline {
         stage('Code') {
             steps {
                 git 'https://github.com/manju9676/WildWeekender.git'
-                sh 'cd infra'
+                // no need to cd here; subsequent stages will operate in the infra subdirectory
             }
         }
         stage('Terraform Init'){
             steps{
-                sh 'terraform init'
+                dir('infra') {
+                    sh 'terraform init'
+                }
             }
         }
         stage('Terraform Plan'){
             steps{
-                sh 'terraform plan -out=tfplan'
+                dir('infra') {
+                    sh 'terraform plan -out=tfplan'
+                }
             }
         }
         stage('Terraform Apply'){
             steps{
-                sh 'terraform apply -auto-approve tfplan'
+                dir('infra') {
+                    sh 'terraform apply -auto-approve tfplan'
+                }
             }
         }
     }
