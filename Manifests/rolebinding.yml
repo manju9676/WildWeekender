@@ -1,12 +1,15 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: wild-weekender-jenkins-rolebinding
+  name: wild-weekender-jenkins-binding
+  namespace: wild-weekender
+
 subjects:
 - kind: ServiceAccount
   name: wild-weekender-jenkins-sa
   namespace: wild-weekender
+
 roleRef:
   kind: Role
-  apiGroup: rbac.authorization.k8s.io
   name: wild-weekender-jenkins-role
+  apiGroup: rbac.authorization.k8s.io

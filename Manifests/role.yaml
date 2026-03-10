@@ -2,29 +2,30 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: wild-weekender-jenkins-role
+  namespace : wild-weekender
 rules:
 - apiGroups: ["*"]
-  resources: 
-  - pods
-  - services
-  - deployments
-  - replicasets
-  - statefulsets
-  - configmaps
-  - secrets
-  - persistentvolumeclaims
-  - events
-  - ingresses
-  - horizontalpodautoscalers
-  - poddisruptionbudgets
-  - resourcequotas
-  - serviceaccounts
-  verbs: 
-  - get
-  - list
-  - watch
-  - create
-  - update
-  - patch
-  - delete
+  resources: ["*"]
+  # - pods
+  # - services
+  # - deployments
+  # - replicasets
+  # - statefulsets
+  # - configmaps
+  # - secrets
+  # - persistentvolumeclaims
+  # - events
+  # - ingresses
+  # - horizontalpodautoscalers
+  # - poddisruptionbudgets
+  # - resourcequotas
+  # - serviceaccounts
+  verbs: ["*"]
+  # - get
+  # - list
+  # - watch
+  # - create
+  # - update
+  # - patch
+  # - delete
 
