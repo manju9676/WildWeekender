@@ -59,7 +59,7 @@ pipeline {
             steps{
                 sh 'sed -i "s/IMAGE_TAG/$BUILD_NUMBER/g" Manifests/4.deploy.yml'
                 sh 'git add Manifests/4.deploy.yml && git commit -m "Update image tag to $BUILD_NUMBER" '
-                sh 'git push https://:$GIT_PAT@github.com/$GIT_USERNAME/$REPO.git master'                                                                                                                                 
+                sh 'git push https://$GIT_USERNAME:$GIT_PAT@github.com/$GIT_USERNAME/$REPO.git HEAD:master'                                                                                                                                 
             }
         }
         stage('Deploy to K8s'){
