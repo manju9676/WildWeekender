@@ -1,11 +1,11 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: yelp-camp-service
+  name: wild-weekender-service
 spec:
   type: LoadBalancer
   selector:
-    app: yelp-camp
+    app: wild-weekender
   ports:
     - port: 80
       targetPort: 3000

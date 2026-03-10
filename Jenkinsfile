@@ -42,6 +42,11 @@ pipeline {
                 sh 'docker build -t $Image_Name .'
             }
         }
+        stage('Image Scan'){
+            steps{
+                sh 'trivy image $Image_Name'
+            }
+        }
         stage('tag and push'){
             steps{
                 withDockerRegistry(credentialsId: 'docker-hub') {
