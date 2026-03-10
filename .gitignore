@@ -1,3 +1,5 @@
 infra/.terraform/
 
 infra/.terraform.lock.hcl
+.scannerwork/
+dependency-check.xml

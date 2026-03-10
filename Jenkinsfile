@@ -4,6 +4,10 @@ pipeline {
         SCANNER_HOME = tool('sonar')
         IMAGE_NAME = 'wild_weekender'
         DOCKER_USERNAME = 'manju9676'
+        GIT_USERNAME = 'manju9676'
+        GIT_EMAIL = 'kmanjunatheee@gmail.com'
+        GIT_PAT = credentials('github-pat')
+        REPO = 'WildWeekender'
     }
     stages{
         stage('Code'){
@@ -51,6 +55,13 @@ pipeline {
                
                 }
           }
+        stage('Update Image tag'){
+            steps{
+                sh 'sed -i "s/IMAGE_TAG/$BUILD_NUMBER/g" Manifests/4.deploy.yml'
+                sh 'git add Manifests/4.deploy.yml && git commit -m "Update image tag to $BUILD_NUMBER" '
+                sh 'git push https://:$GIT_PAT@github.com/$GIT_USERNAME/$REPO.git master'                                                                                                                                 
+            }
+        }
         stage('Deploy to K8s'){
             steps{
                 withKubeConfig(caCertificate: '', clusterName: 'EKS_CLOUD', contextName: '', credentialsId: 'k8-token', namespace: 'wild-weekender', restrictKubeConfigAccess: false, serverUrl: 'https://CF6A4933A3FF7AF6AD047EC6DCF3238F.gr7.us-east-1.eks.amazonaws.com') {
