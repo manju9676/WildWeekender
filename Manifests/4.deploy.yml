@@ -23,7 +23,7 @@ spec:
 
       containers:
         - name: wild-weekender-container
-          image: manju9676/wild_weekender:IMAGE_TAG
+          image: manju9676/wild_weekender:37
           ports:
             - containerPort: 3000
 
