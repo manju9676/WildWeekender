@@ -2,6 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: wild-weekender-service
+  namespace: wild-weekender
 spec:
   type: LoadBalancer
   selector:

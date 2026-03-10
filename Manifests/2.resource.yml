@@ -2,6 +2,7 @@ apiVersion: v1
 kind: ResourceQuota
 metadata:
   name: WildWeekender-quota
+  namespace: wild-weekender
 spec:
   hard:
     pods: "20"

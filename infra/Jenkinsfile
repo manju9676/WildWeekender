@@ -1,0 +1,27 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Code') {
+            steps {
+                git 'https://github.com/manju9676/WildWeekender.git'
+                sh 'cd infra'
+            }
+        }
+        stage('Terraform Init'){
+            steps{
+                sh 'terraform init'
+            }
+        }
+        stage('Terraform Plan'){
+            steps{
+                sh 'terraform plan -out=tfplan'
+            }
+        }
+        stage('Terraform Apply'){
+            steps{
+                sh 'terraform apply -auto-approve tfplan'
+            }
+        }
+    }
+}

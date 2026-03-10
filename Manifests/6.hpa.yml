@@ -2,6 +2,7 @@ apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: wild-weekender-hpa
+  namespace: wild-weekender
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
