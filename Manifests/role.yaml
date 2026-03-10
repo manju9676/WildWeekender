@@ -3,7 +3,7 @@ kind: Role
 metadata:
   name: wild-weekender-jenkins-role
 rules:
-- apiGroups: [""]
+- apiGroups: ["*"]
   resources: 
   - pods
   - services
@@ -27,4 +27,4 @@ rules:
   - update
   - patch
   - delete
-  
+
